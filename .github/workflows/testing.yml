@@ -1,14 +1,34 @@
 name: Testing workflow
 
-on: [push, pull_request]
+  on: [push, pull_request]
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.8.10'
-      - name: "Run unittest"
-        run: python -m unittest    
+  jobs:
+    style:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-python@v2
+          with:
+            python-version: '3.8.10'
+        - name: "Install style checker"
+          run: pip install --user black
+        - name: "Run style check"
+          run: black --check .
+    build:
+      needs: style
+      runs-on: ubuntu-latest
+      env:
+        PROJECT_NAME: "Automation Lecture"
+      steps:
+        - name: "Run build phase"
+          run: echo "Building project $PROJECT_NAME"
+    test:
+      needs: build
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: actions/setup-python@v2
+          with:
+            python-version: '3.8.10'
+        - name: "Run unittest"
+          run: python -m unittest 
