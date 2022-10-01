@@ -26,7 +26,7 @@ def find_max(data):
         if n > max_num:
             max_num = n
 
-    return max_num
+    return max_num - 1
 
 
 def find_mean(data):
